@@ -1,0 +1,449 @@
+OS
+---
+ |->System software
+ |->Interface btn user and h/w
+
+
+ +----------------------+
+ | User:
+ +----------------------+
+ | OS:
+ +----------------------+
+ | H/W:CPU RAM HD IO NIC
+ +----------------------+
+
+ Kernel - Core part of an OS
+
+#################################################
+1940...
+ 
+1950. osX...............
+	|
+	x10 x11 x86 ...
+
+ PDP ->..PDP11 ->BCPL ->B+ 1969
+			|
+			C ->Unix 1971/72
+Unix - ServerOS
+----
+minix - Unix like OS - edu
+
+GNUProject - RSM
+--------------------//1983
+->bash
+->gcc
+->g++
+->gdb
+->gzip ... //tools
+->grub/grub2
+
+LinusTorvald - Unix ->Linux
+	|
+	Kernel--------GNULinux  //1991
+
+Distributors 
+- RedHat
+- Oracle
+- Debian
+- ...    // tools + Linux(Kernel) =>OS
+		
+
+RedHat Linux -> ls ps ..
+------------
+   |->yum install httpd
+
+Ubuntu  ->ls ps whoami ...
+--------
+   |->apt-get install apache2
+
+xwindow - GUI
+##################################################################################
+
+Kernel - File,Process
+
+File - Data Under the Storage
+		  ------------
+Process - Data Under the CPU
+			 ----
+
+User: Appln
+--------------------------//shell-------------------
+	[systemcall]
+	 |
+	 |			
+	FileSystem<-->PCB|IPC;SCHED;MM;Net|
+	 |		 |________________|
+	Device Driver
+	 |
+	Device Controller
+	 |
+--------------------------------------------
+H/W: CPU RAM HD IO NIC ....
+
+shell - interface between user and kernel
+ 
+systemcall ->functionCall() = FD
+
+	    FD=0 <STDIN>
+	    FD=1 STDOUT
+	    FD=2 STDERR
+	    FD=0x3432 <== memory
+	    
+	    FD=3 to 2 pow 32/64 <== ValidCall
+
+	    FD=-1 <== FailedCall
+
+strace <command>
+
+
+
+echo "Hello"   C ->printf("Hello");  C++ ->cout<"Hello"; perl ->print "Hello";
+-------------------------------------------------------------------------------------
+		
+		write(1,"Hello") = FD
+		-------------------------//systemcall
+
+##################################################################################
+Boot process
+--------------
+OFF ->Switch ON PC ->PowerOnSelfTest(POST) ->MasterBootRecord(MBR) ->BootLoader(grub/grub2)
+					     .......................	|	
+						Partition+Bootloader	|	
+						  			|
+									Load the Kernel
+									|
+									systemd(PID:1)
+									|
+									runlevel process//by systemD(?)
+									|
+									getty (or) login ? (or) Login:__
+									|			Password:__
+									|			|	
+									shell(CLI)		Desktop(GUI)
+									|			|
+									User IO			User IO <== user process
+#######################################################################################################################################################
+Linux File structure 
+--------------------
+		
+			/  <== root directory - Like a mycomputer
+			|
+  -------------------------------------------------------
+  |	 |	|	 |	|	|	|
+ bin/	etc/	root/	home/	var/	proc/	dev/ .. <= subdirectories
+
+
+ /bin/ - list of all the binary file(commands)
+ 
+ etc - list of all the configuration
+
+ var/log - log details
+ 
+ proc - process related files
+ dev - device files
+
+ root/
+ home/
+ -------//login directories
+
+Login as:root				Login as: arun
+password:				password:
+			
+root@host~]# pwd			arun@host~]$ pwd
+/root <== root login path		/home/arun <== arun user login path
+
+					Login as: student
+					password:
+
+					student@host~]$ pwd
+					/home/student
+root@host~]# ls /home
+arun student
+##################################################################################
+
+command
+command -<char>
+	  |
+	option
+
+uname
+uname -r
+uname -n
+uname -a
+      ---//option
+
+man <command>
+..
+q<= quit
+#######################################################################
+
+Directory manipulation commands
+------------------------------------
+mkdir <directoryName>
+
+mkdir <Dir1> <Dir2> <Dir3> ... <DirN>
+
+mkdir -p <Dir1>/<Dir2>/<Dir3>  <== sub-directories
+
+cd <directoryname>
+	
+To copy directory 
+-----------------
+cp -r <oldDirectory> <newDirectory>
+
+
+To rename an existing directory
+---------------------------------
+mv <old-name> <new-name>
+
+move - like cut/paste
+----
+mv <old1> <old2>
+     
+To delete a directory file
+-----------------------------
+rmdir <directoryName> <== directory must be an empty
+|
+rm -r <directoryName>
+      ------------------
+	|->Recursive delete
+
+#################################################################################
+ls {enter}
+
+p1.java p1.c p.html p.xml emp.csv 
+  -----   ---  ----  ----    ----- //user level
+
+file <filename> - determine the file type
+----
+Linux File Types
+-----------------
+1. Regular File <or> Ordinary File
+	|
+	|-> ASCII / Text - user can able to read/understand (ex: p1.java p1.c p.html p.xml emp.csv)
+	|-> ELF 	 - user can't able to read/understand(ex: commands; compiled object code)
+
+2. Directory File
+
+3. Link File <or> Symlink <or>Symbolic link #  ln -s <source> <target> //admin usecase 
+
+4. Device file (ls /dev - list of device files)
+	|
+	|->Character Type device - ex: keyboard;terminal;printer
+	|->Block type device	 - ex: USB,HD,CDROM...
+|
+|
+5. named pipe <or> FIFO 
+|
+6. Socket file 									
+
+########################################################################################
+ 
+1. vi <or> vim editor - commandline editor
+   ------------------
+
+vi p1.java	vi p1.c  vi p1.sh  vi network.cfg   vi p1.py   vi filename
+
+To create a newfile
+---------------------
+vi <filename> {Enter}  <== (1)
+
++----------------------------------------------------+
+|
+|  command mode  - save ; create line	
+|                  copy;delete - line ;word;char
+|			..			
+|	|  press 'i'  <==(2)
+|	|
+|  insert mode <or> input mode
+|    //insert some text <==(3)
+|	| 		
+|   Press ESC <==(4)
+|	|
+| :w <== (write) <== (5) {Enter}
+| 
+  :wq <== save and exit
+ 
+  vi file.txt{enter}
+  
+  :q <= quit
+
+  vi file.txt
+  
+  :q! <== forced to quit
+  ---
+
+ cat filename{Enter} 
+
+
+ command | less   <== PgUp PgDn Home End <or> cursor keys 
+  |	     |  ^     .....................................
+ o/p	     |  |
+  |__________| 
+     ->--
+
+ How to copy reg.file ?		Vs	 directory copy -> cp -r oldDir newDir
+ 
+ cp old NewFile
+ --  	 |
+ 	 |
+	if NewFile is exists - overwrite existing data
+
+mv
+---
+ |-> rename => mv oldname newname
+ |-> move   => mv oldname <directory>
+
+[student@krosumlabs Dx]$ ls
+ab.txt  p1.txt  p2.txt  r1.log  test1.log
+[student@krosumlabs Dx]$
+[student@krosumlabs Dx]$ mv r1.log result.log
+[student@krosumlabs Dx]$ ls
+ab.txt  p1.txt  p2.txt  result.log  test1.log
+[student@krosumlabs Dx]$
+[student@krosumlabs Dx]$
+[student@krosumlabs Dx]$ mkdir D1
+[student@krosumlabs Dx]$
+[student@krosumlabs Dx]$ mv ab.txt D1
+[student@krosumlabs Dx]$
+[student@krosumlabs Dx]$ ls
+D1  p1.txt  p2.txt  result.log  test1.log
+[student@krosumlabs Dx]$
+[student@krosumlabs Dx]$ ls D1
+ab.txt
+[student@krosumlabs Dx]$
+
+How to delete a reg.file?
+
+rm <filename>
+        Vs
+rm -i <filename>
+
+
+[student@krosumlabs Dx]$ ls
+D1  p1.txt  p2.txt  result.log  test1.log
+[student@krosumlabs Dx]$
+[student@krosumlabs Dx]$ rm result.log
+[student@krosumlabs Dx]$
+[student@krosumlabs Dx]$ ls
+D1  p1.txt  p2.txt  test1.log
+[student@krosumlabs Dx]$
+[student@krosumlabs Dx]$ rm -i test1.log
+rm: remove regular file ‘test1.log’? n
+[student@krosumlabs Dx]$
+[student@krosumlabs Dx]$ ls
+D1  p1.txt  p2.txt  test1.log
+[student@krosumlabs Dx]$
+
+
+vi filename{enter}
+...
+...
+:wq
+
+cat filename{enter}
+
+cp -i old new
+mv old new # rename
+mv old dir # move file to directory
+rm -i filename
+
+wc <filename>
+|
+No.of Lines  No.of words  No.of chars
+[student@krosumlabs Dx]$ wc test1.log
+ 12  32 189 test1.log
+[student@krosumlabs Dx]$ wc -l test1.log
+12 test1.log
+[student@krosumlabs Dx]$ wc -w test1.log
+32 test1.log
+[student@krosumlabs Dx]$ wc -c test1.log
+189 test1.log
+[student@krosumlabs Dx]$
+[student@krosumlabs Dx]$
+
+
+[student@krosumlabs Dx]$ rpm -qa|wc -l
+407
+[student@krosumlabs Dx]$ lsmod|wc -l
+85
+[student@krosumlabs Dx]$ ps -e|wc -l
+99
+[student@krosumlabs Dx]$
+[student@krosumlabs Dx]$ ls
+D1  p1.txt  p2.txt  test1.log
+[student@krosumlabs Dx]$
+[student@krosumlabs Dx]$
+[student@krosumlabs Dx]$ ls -r
+test1.log  p2.txt  p1.txt  D1
+[student@krosumlabs Dx]$
+[student@krosumlabs Dx]$ ls -R
+.:
+D1  p1.txt  p2.txt  test1.log
+
+./D1:
+ab.txt
+[student@krosumlabs Dx]$ ls
+D1  p1.txt  p2.txt  test1.log
+[student@krosumlabs Dx]$ ls -r
+test1.log  p2.txt  p1.txt  D1
+[student@krosumlabs Dx]$
+[student@krosumlabs Dx]$ ls -l
+total 12
+drwxrwxr-x. 2 student student  20 Aug  5 16:33 D1
+-rw-rw-r--. 1 student student 105 Aug  5 11:53 p1.txt
+-rw-rw-r--. 1 student student  18 Aug  5 12:02 p2.txt
+-rw-rw-r--. 1 student student 189 Aug  5 16:21 test1.log
+[student@krosumlabs Dx]$
+[student@krosumlabs Dx]$
+[student@krosumlabs Dx]$ ls -lr
+total 12
+-rw-rw-r--. 1 student student 189 Aug  5 16:21 test1.log
+-rw-rw-r--. 1 student student  18 Aug  5 12:02 p2.txt
+-rw-rw-r--. 1 student student 105 Aug  5 11:53 p1.txt
+drwxrwxr-x. 2 student student  20 Aug  5 16:33 D1
+[student@krosumlabs Dx]$
+[student@krosumlabs Dx]$ ls -rl
+total 12
+-rw-rw-r--. 1 student student 189 Aug  5 16:21 test1.log
+-rw-rw-r--. 1 student student  18 Aug  5 12:02 p2.txt
+-rw-rw-r--. 1 student student 105 Aug  5 11:53 p1.txt
+drwxrwxr-x. 2 student student  20 Aug  5 16:33 D1
+[student@krosumlabs Dx]$
+[student@krosumlabs Dx]$ ls
+D1  p1.txt  p2.txt  test1.log
+[student@krosumlabs Dx]$
+[student@krosumlabs Dx]$ vi xen.log
+[student@krosumlabs Dx]$ ls
+D1  p1.txt  p2.txt  test1.log  xen.log
+[student@krosumlabs Dx]$
+[student@krosumlabs Dx]$ ls -r
+xen.log  test1.log  p2.txt  p1.txt  D1
+[student@krosumlabs Dx]$
+[student@krosumlabs Dx]$ ls
+D1  p1.txt  p2.txt  test1.log  xen.log
+[student@krosumlabs Dx]$
+[student@krosumlabs Dx]$ ls -t
+xen.log  D1  test1.log  p2.txt  p1.txt
+[student@krosumlabs Dx]$
+[student@krosumlabs Dx]$
+[student@krosumlabs Dx]$ ls -tr
+p1.txt  p2.txt  test1.log  D1  xen.log
+[student@krosumlabs Dx]$
+[student@krosumlabs Dx]$ ls -trl
+total 16
+-rw-rw-r--. 1 student student 105 Aug  5 11:53 p1.txt
+-rw-rw-r--. 1 student student  18 Aug  5 12:02 p2.txt
+-rw-rw-r--. 1 student student 189 Aug  5 16:21 test1.log
+drwxrwxr-x. 2 student student  20 Aug  5 16:33 D1
+-rw-rw-r--. 1 student student  21 Aug  5 16:50 xen.log
+#######################################################################################
+
+
+
+
+
+
+
+
+
