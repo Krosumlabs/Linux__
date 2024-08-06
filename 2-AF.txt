@@ -1,0 +1,767 @@
+Recap
+-------
+OS
+Unix Vs Linux
+GNU
+Kernel - File,Process
+	 ------------//
+file <filename>
+ls -l 
+<char><permission> <linkCount> <user> <group> <fileSize> <date/time> <filename>
+ |
+FileType
+
+man <command>
+
+command -options
+	 -------
+#########################################################################################
+File Permission
+---------------
+
+ File(F)
+ -------
+	|-> by 3 users
+	    ------------			     r     w     x 
+	     1. user <or> author <or> owner   - u - read  write execute
+	     2. group 			      - g - read  write execute
+	     3. others			      - o - read  write execute
+
+sales		prod		FI  <== group
+------		-----		----
+userA		userD		userF
+userB		userE		userG
+userC
+
+Login as: userA
+password:
+
+userA@host~]$ mkdir D1
+userA@host~]$ vi p1.txt
+...
+...
+:wq
+userA@host~]$ ls -l
+....   userA  sales   D1
+....   userA  sales   p1.txt
+	|	|
+	user	group
+
+	UserGroupOther
+	rwxrwxrwx
+	rw-r--r--
+	rwxrw-r--
+	 
+Syntax:-
+--------
+chmod userdetails + mode  inputFile(s)
+		  -
+
+userdetails(u;g;o)
+mode(r;w;x)
+
+ls -l p1.txt
+-rw-r--r-- ..p1.txt
+
+chmod u+x p1.txt
+
+ls -l p1.txt
+-rwxr--r-- .. p1.txt
+ 
+chmod ug+rwx p1.txt
+ls -l p1.txt
+
+-rwxrwxr-- ..p1.txt
+
+chmod ugo+x p1.txt -->same as ->chmod a+x p1.txt -->same as ->chmod +x p1.txt
+      -----			      --                           ----
+
+Task:
+Go to Login directory	=>	cd ~  <or>  cd {enter}
+|
+create a new directory	=>	mkdir day2
+|
+Go to day2 directory	=>	cd day2
+|
+use vi - create new file =>	vi p1.txt {Enter}
+				echo "Test message1"
+				echo "Test message2"
+				sleep 3
+				echo "List of files"
+				ls -l
+				sleep 2
+				echo "current process"
+				ps
+				sleep 3
+				echo "Thank you"
+				:wq
+
+Check p1.txt file permission    ls -l p1.txt
+|
+User to execute	a file		chmod u+x p1.txt
+|
+Run a file			./p1.txt 
+				
+remove an execute permission	chmod u-x p1.txt
+|
+Run a file & read the error	./p1.txt
+							
+##################################################################################
+	4	2	1
+	r	w	x
+	1	1	1	-> 7
+	1	1	0	-> 6
+	1	0	1	-> 5
+	1	0	0	-> 4
+	0	0	0	-> 0
+
+	chmod 756 p1.txt
+	      |||___others -> rw-
+	      ||
+	      ||__group -> r-x
+	     rwx
+
+	-rwxr-xrw- ... p1.txt
+
+##################################################################################
+Redirection
+------------
+
+uname ->Linux
+	--------//STDOUT FD=1
+
+unamee -> Error
+	  -----//STDERR  FD=2
+
+command 1>newFile  same as command >newFile
+
+command >newFile - create and write data to FILE
+	Vs
+command >>newFile - append operation
+	---------
+	  |->won't overwrite an existing data
+
+
+[root@krosumlabs D2]# date >d1.log
+[root@krosumlabs D2]#
+[root@krosumlabs D2]# ls
+d1.log  Demo  p1.txt  p2.txt
+[root@krosumlabs D2]# cat d1.log
+Tue Aug  6 14:32:17 IST 2024
+[root@krosumlabs D2]#
+[root@krosumlabs D2]# ps 1>p1.log
+[root@krosumlabs D2]# ls
+d1.log  Demo  p1.log  p1.txt  p2.txt
+[root@krosumlabs D2]# ls -t
+p1.log  d1.log  Demo  p2.txt  p1.txt
+[root@krosumlabs D2]#
+[root@krosumlabs D2]# cal >p1.log
+[root@krosumlabs D2]# cat p1.log
+     August 2024
+Su Mo Tu We Th Fr Sa
+             1  2  3
+ 4  5  6  7  8  9 10
+11 12 13 14 15 16 17
+18 19 20 21 22 23 24
+25 26 27 28 29 30 31
+
+[root@krosumlabs D2]# hostname >p1.log
+[root@krosumlabs D2]#
+[root@krosumlabs D2]# cat p1.log
+krosumlabs
+[root@krosumlabs D2]# ps >>p1.log
+[root@krosumlabs D2]# cal >>p1.log
+[root@krosumlabs D2]# date >>p1.log
+[root@krosumlabs D2]# cat p1.log
+krosumlabs
+  PID TTY          TIME CMD
+ 1365 pts/0    00:00:00 bash
+19999 pts/0    00:00:00 ps
+     August 2024
+Su Mo Tu We Th Fr Sa
+             1  2  3
+ 4  5  6  7  8  9 10
+11 12 13 14 15 16 17
+18 19 20 21 22 23 24
+25 26 27 28 29 30 31
+
+Tue Aug  6 14:36:07 IST 2024
+[root@krosumlabs D2]#
+
+
+[root@krosumlabs D2]# datee >err.log
+-bash: datee: command not found
+[root@krosumlabs D2]#
+[root@krosumlabs D2]# datee 2>err.log
+[root@krosumlabs D2]#
+[root@krosumlabs D2]# cat err.log
+-bash: datee: command not found
+[root@krosumlabs D2]#
+[root@krosumlabs D2]# ./p1.log 2>err.log
+[root@krosumlabs D2]#
+[root@krosumlabs D2]# cat err.log
+-bash: ./p1.log: Permission denied
+[root@krosumlabs D2]#
+[root@krosumlabs D2]# sadafasdfs 2>>err.log
+[root@krosumlabs D2]#
+[root@krosumlabs D2]# cat err.log
+-bash: ./p1.log: Permission denied
+-bash: sadafasdfs: command not found
+[root@krosumlabs D2]#
+[root@krosumlabs D2]# date >r1.log 2>err.log
+[root@krosumlabs D2]#
+
+################################################################################
+
+command >resultFile
+ |__________|
+
+	Vs
+
+command | tee resultFile
+   |		| - create a new resultFile 
+  o/p		| - write data to file and display the data to monitor
+   |____________|
+
+
+###############################################################################
+file:emp.csv 
+101,raj,sales,pune,1000
+102,leo,prod,bglore,3311
+103,anu,HR,mumbai,3231
+104,theeb,Hr,Hyd,3235
+105,anu,sales,bglore,5999
+423,abhi,SALES,pune,3913
+852,shan,prod,pune,4232
+------------
+
+grep -option <Pattern> <inputFile>
+	     ----------
+		
+-i  ignore pattern case
+
+-n  matched pattern line number
+
+-c  count
+
+-v  not matching a pattern
+
+-e extended pattern
+-E 
+egrep
+
+-l list matched pattern file name only
+-R recursive acccess
+
+[root@krosumlabs D2]# cat emp.csv
+101,raj,sales,pune,1000
+102,leo,prod,bglore,3311
+103,anu,HR,mumbai,3231
+104,theeb,Hr,Hyd,3235
+105,anu,sales,bglore,5999
+423,abhi,SALES,pune,3913
+852,shan,prod,pune,4232
+[root@krosumlabs D2]# man grep
+[root@krosumlabs D2]#
+[root@krosumlabs D2]# grep sales emp.csv
+101,raj,sales,pune,1000
+105,anu,sales,bglore,5999
+[root@krosumlabs D2]#
+[root@krosumlabs D2]# grep SALES emp.csv
+423,abhi,SALES,pune,3913
+[root@krosumlabs D2]# grep HR emp.csv
+103,anu,HR,mumbai,3231
+[root@krosumlabs D2]# grep pune emp.csv
+101,raj,sales,pune,1000
+423,abhi,SALES,pune,3913
+852,shan,prod,pune,4232
+[root@krosumlabs D2]# grep DBA emp.csv
+[root@krosumlabs D2]#
+[root@krosumlabs D2]# grep -i HR emp.csv
+103,anu,HR,mumbai,3231
+104,theeb,Hr,Hyd,3235
+[root@krosumlabs D2]# ps|grep bash
+ 1365 pts/0    00:00:00 bash
+[root@krosumlabs D2]#
+[root@krosumlabs D2]# ps|grep java
+[root@krosumlabs D2]#
+[root@krosumlabs D2]# grep DBA emp.csv
+[root@krosumlabs D2]#
+[root@krosumlabs D2]# grep -i DBA emp.csv
+[root@krosumlabs D2]#
+[root@krosumlabs D2]# ps|grep -i java
+[root@krosumlabs D2]#
+[root@krosumlabs D2]# lsmod |less
+[root@krosumlabs D2]# # How to search bluetooth module is loaded or not ?
+[root@krosumlabs D2]#
+[root@krosumlabs D2]# lsmod|grep -i bluetooth
+[root@krosumlabs D2]#
+[root@krosumlabs D2]# # How to search xfs module is loaded or not ?
+[root@krosumlabs D2]#
+[root@krosumlabs D2]# lsmod|grep -i xfs
+xfs                  1064960  2
+libcrc32c              16384  1 xfs
+[root@krosumlabs D2]#
+[root@krosumlabs D2]#
+[root@krosumlabs D2]# lsmod|grep -i xfs >r1.log
+[root@krosumlabs D2]#
+[root@krosumlabs D2]#
+[root@krosumlabs D2]# cat r1.log
+xfs                  1064960  2
+libcrc32c              16384  1 xfs
+[root@krosumlabs D2]#
+[root@krosumlabs D2]#
+[root@krosumlabs D2]# ps -e|grep bash
+ 1159 tty1     00:00:00 bash
+ 1365 pts/0    00:00:00 bash
+16348 pts/1    00:00:00 bash
+[root@krosumlabs D2]# ps -e|grep cron
+  670 ?        00:00:00 crond
+[root@krosumlabs D2]#
+[root@krosumlabs D2]# ps -e|grep python3
+[root@krosumlabs D2]#
+[root@krosumlabs D2]# cat -n emp.csv
+     1  101,raj,sales,pune,1000
+     2  102,leo,prod,bglore,3311
+     3  103,anu,HR,mumbai,3231
+     4  104,theeb,Hr,Hyd,3235
+     5  105,anu,sales,bglore,5999
+     6  423,abhi,SALES,pune,3913
+     7  852,shan,prod,pune,4232
+[root@krosumlabs D2]# grep sales emp.csv
+101,raj,sales,pune,1000
+105,anu,sales,bglore,5999
+[root@krosumlabs D2]# grep -n sales emp.csv
+1:101,raj,sales,pune,1000
+5:105,anu,sales,bglore,5999
+[root@krosumlabs D2]# grep -ni sales emp.csv
+1:101,raj,sales,pune,1000
+5:105,anu,sales,bglore,5999
+6:423,abhi,SALES,pune,3913
+[root@krosumlabs D2]#
+[root@krosumlabs D2]# grep -c prod emp.csv
+2
+[root@krosumlabs D2]# grep -ic HR emp.csv
+2
+[root@krosumlabs D2]# grep -ic DBA emp.csv
+0
+[root@krosumlabs D2]# grep -v pune emp.csv
+102,leo,prod,bglore,3311
+103,anu,HR,mumbai,3231
+104,theeb,Hr,Hyd,3235
+105,anu,sales,bglore,5999
+[root@krosumlabs D2]# grep -inv pune emp.csv
+2:102,leo,prod,bglore,3311
+3:103,anu,HR,mumbai,3231
+4:104,theeb,Hr,Hyd,3235
+5:105,anu,sales,bglore,5999
+[root@krosumlabs D2]#
+[root@krosumlabs D2]# ps -e|grep -cv bash
+94
+[root@krosumlabs D2]# ps -e|grep -c bash
+3
+[root@krosumlabs D2]# ps -e|wc -l
+97
+[root@krosumlabs D2]#
+
+[root@krosumlabs D2]# grep -e pune -e mumbai -e cityA -e cityB emp.csv
+101,raj,sales,pune,1000
+103,anu,HR,mumbai,3231
+423,abhi,SALES,pune,3913
+852,shan,prod,pune,4232
+[root@krosumlabs D2]# ps -e|grep -e bash -e mysql -e crond -e python3 -e irb
+  670 ?        00:00:00 crond
+ 1159 tty1     00:00:00 bash
+ 1365 pts/0    00:00:00 bash
+16348 pts/1    00:00:00 bash
+[root@krosumlabs D2]# ps -e|grep -ie bash -e mysql -e crond -e python3 -e irb
+  670 ?        00:00:00 crond
+ 1159 tty1     00:00:00 bash
+ 1365 pts/0    00:00:01 bash
+16348 pts/1    00:00:00 bash
+[root@krosumlabs D2]# ps -e|grep -ie bash -e mysql -e crond -e python3 -e irb
+  670 ?        00:00:00 crond
+ 1159 tty1     00:00:00 bash
+ 1365 pts/0    00:00:01 bash
+16348 pts/1    00:00:00 bash
+[root@krosumlabs D2]#
+[root@krosumlabs D2]# egrep  "pune|mumbai|cityA|cityB" emp.csv
+101,raj,sales,pune,1000
+103,anu,HR,mumbai,3231
+423,abhi,SALES,pune,3913
+852,shan,prod,pune,4232
+[root@krosumlabs D2]# grep  -E "pune|mumbai|cityA|cityB" emp.csv
+101,raj,sales,pune,1000
+103,anu,HR,mumbai,3231
+423,abhi,SALES,pune,3913
+852,shan,prod,pune,4232
+[root@krosumlabs D2]# grep -e pune -e mumbai -e cityA -e cityB emp.csv
+101,raj,sales,pune,1000
+103,anu,HR,mumbai,3231
+423,abhi,SALES,pune,3913
+852,shan,prod,pune,4232
+[root@krosumlabs D2]#
+[root@krosumlabs D2]# grep sales *
+grep: Demo: Is a directory
+emp.csv:101,raj,sales,pune,1000
+emp.csv:105,anu,sales,bglore,5999
+[root@krosumlabs D2]# grep sales *.csv
+101,raj,sales,pune,1000
+105,anu,sales,bglore,5999
+[root@krosumlabs D2]# grep -R sales *
+emp.csv:101,raj,sales,pune,1000
+emp.csv:105,anu,sales,bglore,5999
+[root@krosumlabs D2]#
+[root@krosumlabs D2]#
+[root@krosumlabs D2]# grep -l sales *
+grep: Demo: Is a directory
+emp.csv
+[root@krosumlabs D2]#
+[root@krosumlabs D2]#
+[root@krosumlabs D2]# # grep -l semaphore *
+#####################################################################################
+
+grep <pattern> inputFile
+		^^^^^^
+		 ?
+
+find - search file/directory
+
+Syntax:-
+----------
+find <searchpath> -name <inputFile>
+	     		  	
+
+[root@krosumlabs D2]#
+[root@krosumlabs D2]# find -name p1.log
+./Demo/p1.log
+./p1.log
+[root@krosumlabs D2]# pwd
+/root/D2
+[root@krosumlabs D2]#
+[root@krosumlabs D2]# find /root -name p1.log
+/root/ansible_training/p1.log
+/root/p1.log
+/root/D1/L1/p1.log
+/root/D1/p1.log
+/root/D2/Demo/p1.log
+/root/D2/p1.log
+[root@krosumlabs D2]# find /root -name "*.log"
+/root/ansible_training/p1.log
+/root/ansible_training/p2.log
+/root/ansible_training/t1.log
+/root/ansible_training/t2.log
+/root/p1.log
+/root/TF-Activity/DAY-1/project1/D1/r1.log
+/root/D1/d1.log
+/root/D1/err.log
+/root/D1/IP.log
+/root/D1/L1/L2/process.log
+/root/D1/L1/L2/t1.log
+/root/D1/L1/p1.log
+/root/D1/p1.log
+/root/D1/r1.log
+/root/D2/Demo/p1.log
+/root/D2/Demo/test.log
+/root/D2/d1.log
+/root/D2/p1.log
+/root/D2/err.log
+/root/D2/r1.log
+/root/D2/d2.log
+/root/D2/result.log
+[root@krosumlabs D2]# # find / -name "*.sh" |wc -l
+[root@krosumlabs D2]#
+[root@krosumlabs D2]#
+[root@krosumlabs D2]# find / -name "*.sh" |wc -l
+353
+[root@krosumlabs D2]#
+[root@krosumlabs D2]#
+[root@krosumlabs D2]# find /etc -name "*.sh" |wc -l
+9
+[root@krosumlabs D2]#
+[root@krosumlabs D2]#
+[root@krosumlabs D2]# find / -name etc
+/run/initramfs/state/etc
+/etc
+/usr/share/doc/m2crypto-0.21.1/demo/Zope27/instance_home/etc
+/usr/share/doc/m2crypto-0.21.1/demo/ZopeX3/instance_home/etc
+/usr/etc
+/usr/local/etc
+[root@krosumlabs D2]#
+
+#####################################################################################
+cut  ->split the data into multiple fields based on -d<sep>
+---  	
+cut -d<sep> -f<value> <inputFile>
+
+
+[root@krosumlabs D2]# cut -d, -f 1 e
+emp.csv  err.log
+[root@krosumlabs D2]#
+[root@krosumlabs D2]# cat emp.csv
+101,raj,sales,pune,1000
+102,leo,prod,bglore,3311
+103,anu,HR,mumbai,3231
+104,theeb,Hr,Hyd,3235
+105,anu,sales,bglore,5999
+423,abhi,SALES,pune,3913
+852,shan,prod,pune,4232
+[root@krosumlabs D2]# cut -d, -f1 emp.csv
+101
+102
+103
+104
+105
+423
+852
+[root@krosumlabs D2]# cut -d, -f2 emp.csv
+raj
+leo
+anu
+theeb
+anu
+abhi
+shan
+[root@krosumlabs D2]# cut -d, -f3 emp.csv
+sales
+prod
+HR
+Hr
+sales
+SALES
+prod
+[root@krosumlabs D2]# cut -d, -f2,4 emp.csv
+raj,pune
+leo,bglore
+anu,mumbai
+theeb,Hyd
+anu,bglore
+abhi,pune
+shan,pune
+[root@krosumlabs D2]# cut -d, -f2,5 emp.csv
+raj,1000
+leo,3311
+anu,3231
+theeb,3235
+anu,5999
+abhi,3913
+shan,4232
+[root@krosumlabs D2]# cut -d, -f2-5 emp.csv
+raj,sales,pune,1000
+leo,prod,bglore,3311
+anu,HR,mumbai,3231
+theeb,Hr,Hyd,3235
+anu,sales,bglore,5999
+abhi,SALES,pune,3913
+shan,prod,pune,4232
+[root@krosumlabs D2]# cut -d, -f2-4 emp.csv
+raj,sales,pune
+leo,prod,bglore
+anu,HR,mumbai
+theeb,Hr,Hyd
+anu,sales,bglore
+abhi,SALES,pune
+shan,prod,pune
+[root@krosumlabs D2]# cat emp.csv
+[root@krosumlabs D2]# cat emp.csv |grep -i sales
+101,raj,sales,pune,1000
+105,anu,sales,bglore,5999
+423,abhi,SALES,pune,3913
+[root@krosumlabs D2]#
+[root@krosumlabs D2]# cat emp.csv |grep -i sales|cut -d, -f2,4
+raj,pune
+anu,bglore
+abhi,pune
+[root@krosumlabs D2]# cat emp.csv |grep -i sales|cut -d, -f2,4 >s1.csv
+[root@krosumlabs D2]#
+[root@krosumlabs D2]# ps
+  PID TTY          TIME CMD
+ 1365 pts/0    00:00:01 bash
+25596 pts/0    00:00:00 ps
+[root@krosumlabs D2]#
+[root@krosumlabs D2]# ps|cut -d" " -f1
+
+
+25606
+25607
+[root@krosumlabs D2]# ps|cut -d"  " -f1
+cut: the delimiter must be a single character
+Try 'cut --help' for more information.
+[root@krosumlabs D2]#
+[root@krosumlabs D2]#
+[root@krosumlabs D2]# ps|awk '{print $1}'
+PID
+1365
+25644
+25645
+[root@krosumlabs D2]# ps|awk '{print $2}'
+TTY
+pts/0
+pts/0
+pts/0
+[root@krosumlabs D2]# ps|awk '{print $1,$2}'
+PID TTY
+1365 pts/0
+25654 pts/0
+25655 pts/0
+[root@krosumlabs D2]# ps|awk '{print $1,$3}'
+PID TIME
+1365 00:00:01
+25658 00:00:00
+25659 00:00:00
+[root@krosumlabs D2]# ps|awk '{print $1,$4}'
+PID CMD
+1365 bash
+25664 ps
+25665 awk
+[root@krosumlabs D2]#
+
+
+grep - search a pattern from input(PIPE,file)
+find - search a file	
+cut  - split multiple fields based on delimiter
+
+view the content/command results
+-------------------------------------
+less - page by page - PgUp PgDn Home End cursorkeys ; q - quit
+
+more - line by line - cursorkeys,spacebar ; q - quit
+
+head - 1st 10 lines 
+ps -e|head -n 3  # 1st 3lines
+ps -e|head -n 15 # 1st 15lines
+
+tail - last 10 lines
+ps -e|tail -n 3 # last 3 lines
+######################################################################################
+gzip
+----
+gzip filename
+filename.gz
+
+gunzip filename.gz
+..
+gzip filename
+filename.gz
+zcat filename.gz
+----
+tar
+----
+     create - tar -cvf <backup.tar> <list of files>
+     list   - tar -tvf <backup.tar>
+     extract - tar -xvf <backup.tar>
+
+##########
+process
+-------
+ File - data - understorage 
+ |
+ Process - data - underCPU
+
+userprocess		Vs			system process
+-----------					-------------------
+by user						by systemd (PID:1)
+TTY: pts/<port>					TTY: ?
+|						|
+After login session				Before login our session 
+shell is started 				|
+working shell is a parent			running 
+of user process
+
+ps
+ps -e <or> ps -A  - all the process
+
+ps -e|grep -i <processName>
+
+ps -e|grep <PID>
+
+	
+  p1 - Wait 	<---	ExitSignal (SIGCHLD)
+  |				|
+  p2 - Child - Running - Exit ---
+			
+
+NI(nice value)
+-20 -19 -18 -17 .. -3 -2 -1 0 1 2 3 ..19 20
+--------------------------- |  ===============
+   High				Low
+
+nice --19 process
+      ---
+	|-> -Ve 19
+
+nice -19 process
+      ---
+	|-> +Ve 19
+
+ps
+ps -e <or> -A
+ps -l
+ps -f
+ps -elf
+ps -a <== view list process running on other terminal
+
+
+[student@krosumlabs ~]$ ping 127.0.0.1 >ping_report.log
+date
+ls
+ps
+^C[student@krosumlabs ~]$ ps
+  PID TTY          TIME CMD
+16348 pts/1    00:00:00 bash
+28614 pts/1    00:00:00 ps
+[student@krosumlabs ~]$
+[student@krosumlabs ~]$ ping 127.0.0.1 >ping_report.log &
+[1] 28708
+[student@krosumlabs ~]$ ps
+  PID TTY          TIME CMD
+16348 pts/1    00:00:00 bash
+28708 pts/1    00:00:00 ping
+28750 pts/1    00:00:00 ps
+[student@krosumlabs ~]$ jobs
+[1]+  Running                 ping 127.0.0.1 > ping_report.log &
+[student@krosumlabs ~]$ fg %1
+ping 127.0.0.1 > ping_report.log
+^C[student@krosumlabs ~]$ ps
+  PID TTY          TIME CMD
+16348 pts/1    00:00:00 bash
+28979 pts/1    00:00:00 ps
+[student@krosumlabs ~]$ jobs
+[student@krosumlabs ~]$
+[student@krosumlabs ~]$
+[student@krosumlabs ~]$ ping 127.0.0.1 >ping_report.log
+^C[student@krosumlabs ~]$
+[student@krosumlabs ~]$
+[student@krosumlabs ~]$ ping 127.0.0.1 >ping_report.log
+^Z
+[1]+  Stopped                 ping 127.0.0.1 > ping_report.log
+[student@krosumlabs ~]$
+[student@krosumlabs ~]$
+[student@krosumlabs ~]$ ps
+  PID TTY          TIME CMD
+16348 pts/1    00:00:00 bash
+29028 pts/1    00:00:00 ping
+29037 pts/1    00:00:00 ps
+[student@krosumlabs ~]$ jobs
+[1]+  Stopped                 ping 127.0.0.1 > ping_report.log
+[student@krosumlabs ~]$
+[student@krosumlabs ~]$ fg %1
+ping 127.0.0.1 > ping_report.log
+^C[student@krosumlabs ~]$
+[student@krosumlabs ~]$
+[student@krosumlabs ~]$ jobs
+[student@krosumlabs ~]$
+
+kill -9 <PID>
+
+ps
+ps -e <or> -A
+ps -f
+ps -l
+ps -a
+ps -elf
+jobs
+fg% <eventID>
+bg% <eventID>
+kill -9 <PID>
+#######################################################################################
