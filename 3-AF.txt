@@ -1,0 +1,634 @@
+Recap
+-------
+Day1: Linux ->Kernel ->File,Process
+      File ->File structure ->File Types
+      File manipulation commands
+Day2: File Permission ->redirection
+      filters:grep,find,cut,head,less,more,less
+      process: ps -options;jobs;kill -9 <PID>
+--------
+Shell Script
+=====
+ |
+ |-> Interface between user and kernel
+	
+     commands (child process)
+    ------------------//shell (parent process)
+
+ 1.BourneShell(sh)   expr 10 + 20	Vs    expr 10+20
+			  -------		   ------
+			   |			    |
+			  30			   10+20
+			 		
+ 2.KornShell (ksh)   echo $((10+20))  ->30  echo $((10             +20)) ->30
+ |			
+ 3.CShell (csh) 
+ |
+ 4.Tcsh
+ 
+ 5.BourneAgainSHell(BASH) - GNU - default shell
+
+How to check list of available shells in working Linux?
+  cat /etc/shells
+
+How to check current working shell?
+	ps  <== command
+	<or>
+        echo $0 <== special variable
+
+Login: root
+password:
+
+root@host~]# echo $0
+csh <== current working shell is csh
+
+root@host~]# sh {Enter}
+sh-4.2#
+sh-4.2# echo $0
+sh  <== current working shell is sh
+
+sh-4.2# date (childprocess - parent process is sh)
+sh-4.2# exit
+root@host~]# echo $0
+csh
+
+#############################################################################
+
+file:p1.sh
+-----------
+#!/bin/bash  <== shabang
+....
+....
+....
+-------------
+
+Host01:Linux
+----------
+userA
+
+userA@host01~]$ echo $0
+bash 
+
+userA@host01~]$ vi p2.sh {enter}
+echo "Test-1"
+....
+....
+....
+echo "End of the line"
+:wq
+
+userA@host01~]$ chmod a+x p2.sh
+userA@host01~]$ ./p2.sh
+Test-1
+...
+...OK
+...
+End of the line					  Host02: Aix
+userA@host01~]$ p2.sh ----------------------->    userB@host02~]$ echo $0
+						  csh
+						  userB@host02~]$ ./p2.sh {Enter} by csh	
+						  Test-1
+						  .....
+						  .....//Error
+						  .....
+						  End of the line
+
+											
+
+userA@host01~]$ vi p3.sh
+#!/bin/bash
+echo "Test-2"
+....
+....
+....
+echo "End of the line"
+:wq
+userA@host01~]$ chmod a+x p3.sh
+userA@host01~]$ ./p3.sh
+Test-2
+...
+...OK
+....
+End of the line
+userA@host01~]$ ----------------------------> userB@host02~]$ echo $0 -> csh
+					      userB@host02~]$ ./p3.sh <== csh
+
+						csh ->bash ->..... exit
+					      userB@host02~]$ 
+#!/bin/sh
+
+#!/bin/csh
+
+#!/bin/ksh
+
+#!/bin/bash
+#####################################################################################
+
+Single line comment #
+
+Multiline comment
+-----------------
+<<Flag
+....
+....
+....
+Flag
+
+#####################################################################################
+
+1. Command only style    root@host~]# uptime
+			 root@host~]# ls
+			 root@host~]# ps
+			 root@host~]# whoami
+			 root@host~]# date
+				      pwd
+                                      cal
+                                      ...
+
+2. Command with argument style
+			root@host~]# echo Shell script
+				     ---- ==a1== ==a2==
+
+			root@host~]# ls -l p1.txt p2.txt p3.txt
+				     -- == ====== ====== ======
+
+			root@host~]# echo "Unix and Linux scripts"
+
+                        root@host~]# echo  Unix and Linux scripts 
+
+
+
+
+3. Command with `Command` style     ``<=backquote - this is NOT a single quote 
+
+	root@host~]# uname  <==Command only
+        Linux	     -----	
+	root@host~]# echo "My working kernel name is:uname" <==Command with args
+		     ----              Vs
+	root@host~]# echo "My working kernel name is:`uname`"
+
+	command `command` <or>  command $(command)
+		 -------		----------
+
+
+
+[root@krosumlabs SH-Day3]# uname
+Linux
+[root@krosumlabs SH-Day3]# echo "My working kernel name is:uname"
+My working kernel name is:uname
+[root@krosumlabs SH-Day3]#
+[root@krosumlabs SH-Day3]# echo "My working kernel name is:`uname`"
+My working kernel name is:Linux
+[root@krosumlabs SH-Day3]#
+[root@krosumlabs SH-Day3]# echo "Total No.of process count:`ps -e|wc -l`"
+Total No.of process count:98
+[root@krosumlabs SH-Day3]# date
+Wed Aug  7 14:22:58 IST 2024
+[root@krosumlabs SH-Day3]# date +%D
+08/07/24
+[root@krosumlabs SH-Day3]# echo "Today:date +%D"
+Today:date +%D
+[root@krosumlabs SH-Day3]# echo "Today:`date +%D`"
+Today:08/07/24
+[root@krosumlabs SH-Day3]# echo "Today:$(date +%D)"
+Today:08/07/24
+[root@krosumlabs SH-Day3]#
+#########################################################################################
+Shell Script
+      ------
+        |->Variables
+		|->1.User defined variable
+		|->2.Shell variables
+		|->3.Commandline argument variable
+		|->4.Array
+	|->Operators
+		|->1.Arithmetic 2.relational  3.logical  4. file test 
+	|->Conditional statement
+		|->if,case
+	|->Looping statements
+		|->Conditional style
+		|->Collection style
+	|->Function
+		|->Call , arguments,scope,return,loadable scripts
+		
+shellscript - plain text file - valid command + syntax
+|
+|-->Dynamic type script
+	|
+	|->there is NO main()
+	|->there is NO prototype
+	|->there is NO primitive type declaration 
+
+p1.sh <or> p1 //Valid
+
+
+variable - placeholder - holding a value
+				   -----//any text,number,command,command results etc.,
+1.User defined variable
+
+  variablename=value
+  
+  rule 1: variablename - starts with a-zA-Z_ 
+  rule 2: There is no space in = LHS,RHS
+
+  rule 3: don't initialize shell keywords,commands as a variable
+
+  IP="10.20.30.40"
+  dept="admin"  # dept=admin //OK
+  count=56
+  Fname="/etc/passwd"
+  -----  ---------------
+  |	   |_Value
+  UDV
+
+  echo IP => IP Vs   echo $IP ->10.20.30.40
+			<or>
+		     echo ${IP} ->10.20.30.40
+
+
+ cmd="date"
+ |    ----
+ echo "Today:$cmd" => Today:date
+
+  How to initialize command results to UDV ?
+	-----------------------------
+	   variable=`command`  <or> variable=$(command)
+
+									MM/DD/YYYY
+Write a shell script							   |
+initialize file detials(filename,fileIndexNumber,fileowner,fileSize,today date,working kernel name to UDV)
+use echo command - display initialized values
+
+Fname="test1.log"
+Findex=3234
+Fuser="userA"
+FSIZE="5KB"
+d=`date +%D`
+os=`uname`
+
+echo "File name:$Fname"
+echo "$Fname IndexNumber:$Findex"
+echo "$Fname size:$FSIZE  Username:$Fuser"
+echo "Today:$d"
+echo "Working Kernel name:$os"
+###################################################################################
+Multiline statement
+---------------------
+
+root@host~]#
+---------------//primary prompt
+
+root@host~]# echo "data1{Enter}
+>data2{Enter}
+>data3{Enter}
+>data4{Enter}
+>data5"{Enter}
+|__secondary prompt
+
+
+#############################################################################################
+Fname="test1.log"
+Findex=3234
+Fuser="userA"
+FSIZE="5KB"
+d=`date +%D`
+os=`uname`
+
+echo "File name:$Fname
+-----------------------------
+$Fname IndexNumber:$Findex
+-----------------------------
+$Fname size:$FSIZE  Username:$Fuser
+------------------------------------
+Today:$d
+---------------
+Working Kernel name:$os
+---------------------------------"
+###################################################################################
+
+						     echo
+Keyboard(<STDIN>)-----<------------ShellScript---------->-----------Monitor(STDOUT)
+		     read
+
+Syntax:-
+---------
+read UDV
+
+echo "Enter a filename:"
+read Fname
+echo "File name is:$Fname"
+		   
+
+read -p "prompt message:"<space>UDV
+	|___STDOUT______|       |__<STDIN>
+
+read -p "Enter a filename:" Fname
+echo "File name is:$Fname"
+
+2.Shell variables
+---------------------
+ |->Builtin variables <or> env variables <or> shell variables <or> exported variables 
+   <or> pre-defined variables
+
+env {Enter}
+---
+ |->command
+
+
+DB="/usr/bin/oracle"
+
+export Variable=Value ->(1)
+   <or>
+Variable=Value
+export Variable     ->(2)
+
+
+Recap boot process
+-------------------
+OFF ->SwitchOn PC ->POST ->MBR ->Bootloader ->Kernel ->Systemd(PID:1) ->runlevel process(?)
+										|
+										getty <or>login ?
+										|
+										Shell(CLI)
+Login: root				Login:student
+password:				password:
+|					|
+ read and execute /etc/profile <== Global Config profile
+		  ------------
+root@host~]# ls -a				student@host~]$ ls -a
+
+.bashrc						.bashrc
+|__Hidden file
+
+root@host~]# vi .bashrc				student@host~]$ vi .bashrc
+					
+export DB=/usr/bin/oracle			export File="/var/log/repo.log"
+:wq						:wq
+					
+root@host~]# logout ->login again		Login: student
+..						password:
+						student@host~]$ echo $File 
+						/var/log/repo.log
+
+########################################################################################
+|->Operators
+   |->1.Arithmetic 2.relational  3.logical  4. file test 
+			
+1.Arithmetic 
+------------- 				
+  a. expr - command =>  expr<space><operand><space>OPERATOR<space><operand>
+				   ----------------------------------------
+		expr 10 + 20 ->30
+		expr 10+20 ->10+20
+	
+  ls *.log
+  ls p*
+     ------	expr 10 * 3	
+		
+
+
+  b. compound style - $((expression))
+
+##############################################################################
+
+  $? - special variable
+  --
+  |->last command operation exit code
+			    ----------
+				|-> 0 - Success ; 1 2 3 .. 126 127 //failed
+						  $? not equal to zero //failed 
+command1
+command2
+echo $? ------ command2 operation exit code
+command3
+
+
+[root@krosumlabs SH-Day3]# date
+Wed Aug  7 16:02:36 IST 2024
+[root@krosumlabs SH-Day3]# echo $?
+0
+[root@krosumlabs SH-Day3]# cat p1
+echo "Test-message1"
+echo "End of the line"
+[root@krosumlabs SH-Day3]# echo $?
+0
+[root@krosumlabs SH-Day3]# cat ppp.log
+cat: ppp.log: No such file or directory
+[root@krosumlabs SH-Day3]# echo $?
+1
+[root@krosumlabs SH-Day3]# /etc/passwd
+-bash: /etc/passwd: Permission denied
+[root@krosumlabs SH-Day3]# echo $?
+126
+[root@krosumlabs SH-Day3]# asfsfss
+-bash: asfsfss: command not found
+[root@krosumlabs SH-Day3]#
+[root@krosumlabs SH-Day3]# echo $?
+127
+[root@krosumlabs SH-Day3]#
+[root@krosumlabs SH-Day3]# grep bash /etc/passwd
+root:x:0:0:root:/root:/bin/bash
+student:x:1000:1000:student:/home/student:/bin/bash
+userA:x:1001:1001::/home/userA:/bin/bash
+[root@krosumlabs SH-Day3]#
+[root@krosumlabs SH-Day3]# echo $?
+0
+[root@krosumlabs SH-Day3]# grep tcsh /etc/passwd
+[root@krosumlabs SH-Day3]#
+[root@krosumlabs SH-Day3]# echo $?
+1
+[root@krosumlabs SH-Day3]#
+##############################################################################
+relational operators
+----------------------
+		|
+   string		 number
+    ==			  -eq -ne -lt -le -gt -ge
+    !=			  .........................
+
+  va=501
+  vb="root"
+
+  $va -eq 0
+
+  $vb == "root"
+
+  ps -e|wc -l gt 100
+
+  test operator 
+  -------------
+   test <or> [ ]
+
+ test<space>Expression
+  <or>
+ [<space>Expression<space>]
+
+Logical operators
+-------------------
+Logical and -a
+Logical or  -o
+Logial Not  !
+
+
+[student@krosumlabs ~]$ [ `whoami` == "root" ]
+[student@krosumlabs ~]$ echo $?
+1
+[student@krosumlabs ~]$ whoami
+student
+[student@krosumlabs ~]$ who am i
+student  pts/4        2024-08-07 11:46 (192.168.1.5)
+[student@krosumlabs ~]$
+[student@krosumlabs ~]$
+[student@krosumlabs ~]$ [ `ps -e|wc -l` -gt 100 ]
+[student@krosumlabs ~]$ echo $?
+0
+[student@krosumlabs ~]$ ps -e|wc -l
+103
+[student@krosumlabs ~]$ [ "`whoami`" == "root" -a 160 -gt 100 ]
+[student@krosumlabs ~]$ echo $?
+1
+[student@krosumlabs ~]$ [ "`whoami`" != "root" -a 160 -gt 100 ]
+[student@krosumlabs ~]$ echo $?
+0
+[student@krosumlabs ~]$ [ "$SHELL" == "/bin/bash" -o "$SHELL" == "/bin/sh" ]
+[student@krosumlabs ~]$ echo $?
+0
+[student@krosumlabs ~]$ echo $SHELL
+/bin/bash
+[student@krosumlabs ~]$
+
+
+Conditional statement
+-------------------------
+if statement
+
+1. if only
+2. if else
+3. if elif elif elif ...else 
+
+if only
+--------
+if<space>[<space>Expression<space>]
+then
+	<True Block>
+fi
+
+if else
+---------
+if<space>[<space>Expression<space>]
+then
+    <True Block>
+else
+    <False Block>
+fi
+
+
+[root@krosumlabs SH-Day3]# bash -x p6
++ read -p 'Enter a port number:' port
+Enter a port number:567
++ '[' 567 -gt 500 ']'
++ echo 'Valid port'
+Valid port
++ app=TestApp
++ echo 'App name is:TestApp  running port number:567'
+App name is:TestApp  running port number:567
+[root@krosumlabs SH-Day3]# clear
+[root@krosumlabs SH-Day3]# cat -n p6
+     1  read -p "Enter a port number:" port
+     2
+     3  if [ $port -gt 500 ]
+     4  then
+     5          echo "Valid port"
+     6          app="TestApp"
+     7  else
+     8          echo "Invalid port"
+     9          app="demoApp"
+    10  fi
+    11
+    12  echo "App name is:$app  running port number:$port"
+[root@krosumlabs SH-Day3]#
+[root@krosumlabs SH-Day3]# bash -x p6
++ read -p 'Enter a port number:' port
+Enter a port number:567
++ '[' 567 -gt 500 ']'
++ echo 'Valid port'
+Valid port
++ app=TestApp
++ echo 'App name is:TestApp  running port number:567'
+App name is:TestApp  running port number:567
+[root@krosumlabs SH-Day3]# bash -x p6
++ read -p 'Enter a port number:' port
+Enter a port number:456
++ '[' 456 -gt 500 ']'
++ echo 'Invalid port'
+Invalid port
++ app=demoApp
++ echo 'App name is:demoApp  running port number:456'
+App name is:demoApp  running port number:456
+[root@krosumlabs SH-Day3]#
+
+if elif elif elif ...else 
+---------------------------
+Syntax:-
+---------
+if [ condition1 ]
+then	
+	True block1
+elif [ condition2 ]
+then
+	True block2
+
+elif [ condition3 ]
+then
+	True block3
+..
+else
+	False block
+fi
+
+Write a shell script
+read a shell name from <STDIN>
+test ->input shell is bash => initialize profile filename is bashrc
+test ->input shell is ksh => initialize profile filename is kshrc
+test -> input shell is csh => initialize profile filename is cshrc
+|
+default shell name is: /bin/nologin and profile filename /etc/profile
+|
+display shell name and profile filename.
+
+
+read -p "Enter a shell name:" var
+
+if [ "$var" == "bash" ]
+then
+	fname="bashrc"
+elif [ "$var" == "ksh" ]
+then
+	fname="kshrc"
+elif [ "$var == "csh" ]
+then
+	fname="cshrc"
+else
+	var="/bin/nologin"
+	fname="/etc/profile"
+fi
+
+echo "Shell name:$var  profile filename:$fname"
+
+################################################
+case statement
+---------------
+case value in
+pattern1)  pattern1 operation 
+	   ;;
+pattern2)  pattern2 operation 
+	   ;;
+pattern3)  pattern3 operation 
+	   ;;
+..
+patternN)  patternN operation 
+	   ;;
+*) default operation
+esac
+
+#####################################################################################
