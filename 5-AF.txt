@@ -1,0 +1,413 @@
+Recap
+-----
+shell script - unix/linux command oriented language
+	     
+command -option <arg1> <arg2> .. <argN>  ->results
+		...... ......    ......		|--->STDOUT FD=1   >r1.log
+		|______|___________|		|--->STDERR FD=2   2>err.log
+			|
+			variable - (var=<Value>; read -p "" <var>; $1..${n}; array=())
+				   (export var=<value>)
+ $? -> exit status 
+ |
+ validation 
+ - looping statements
+ 
+ - reusability - function 
+###################################################################################
+
+man <command>
+-----------------
+whatis <command> - command definition only
+......
+
+whereis <command>
+------- 
+ /bin/ ; /sbin/ ; /usr/bin/ ; /usr/sbin
+ echo $PATH
+      ------
+PATH 
+
+#####################################################################################
+vmstat
+iostat
+mpstat
+netstat
+
+df - mounted filesystem details
+	|
+	H/w attached with Kernel
+
+####################################################################################
+fx(){
+        vmstat $1 $2 >>vmstat_report.log
+}
+fy(){
+        iostat $1 $2 >>ioreport.log
+}
+fz(){
+        mpstat $1 $2 >>process.log
+}
+echo "1. vmstat
+2. iostat
+3. mpstat"
+read -p "Enter your choice:" choice
+
+case $choice in
+1) fx 2 3 ;;
+2) fy 3 4 ;;
+3) fz 4 2 ;;
+*) echo "Invalid Choice"
+esac
+#########################################################################################
+vi editor commands
+
+vi <filename> {Enter}
+-------------------------------
+
+  <command mode> - save;copy;paste;delete;insert new line ...
+
+	press 'i' <or> Insert
+	 |
+	<insert mode> - Type your Text
+-------------------------------
+ESC -> yy (line copy); p (paste the line content)
+    
+ESC ->u (undo)
+ESC ->. (redo)
+
+	Nyy - Nlines are copied (ex: 3yy - 3lines are copied)
+	p - paste the line content(  p - paste)
+	
+	yw - word copy		; p - paste
+	3yw - 3words are copied ; p - paste
+	
+	
+	dd (delete the current line) 
+	5dd - 5lines are deleted
+	
+	dw - delete a word
+	5dw - 5words are deleted 
+	
+	x - delete single character
+	
+yy ->p (copy ->paste)
+dd ->p (cut ->paste)
+
+ESC + o (small Oh) - create a new line (in below) change to insert mode
+ESC + O (upper Oh) - create a new line (in above) change to insert mode
+
+
+ESC + :set nu - set the number
+|
+ESC + :set nonu - delete the number
+
+ESC  :s/Oldpattern/<replaceString>/ig    i - ignore case ; g - global replacement
+        ..........  ..............
+ 
+##########################################################################################
+Network 
+--------
+ip a <or> ip addr  - ip address details 
+
+Interface
+ |->Ethernet  eth0 eth1 enp<port>s<port> enp0s0 enp0s1 
+ |->loopback  lo - 127.0.0.1
+		   ...........
+
+NetworkManager (GUI)
+
+1.network configuration files - /etc/sysconfig/network-scripts/ifcfg-<InterfaceName>
+				-----------------------------------------------------
+
+2. /etc/hosts
+ 
+  FQDN	IPAddress	Alias
+
+host01.example.org  10.20.30.40  host01
+
+
+ping 
+
+ssh host01
+...yes
+..
+
+####################################################################################
+user management
+-------------------//UPG Policy
+		    (User Private Group)  
+
+add a new user		-> useradd <username> ; create a user account; /home/<username>;/var/mail/<username>
+			   passwd <username> 
+
+modify an existing user -> usermod -option ....
+
+delete an existing user account  ->userdel -r <username> 
+					   ---
+/etc/passwd  - any user can able to read
+
+/etc/shadow  - root user only can able to read 
+	
+id <username>
+cat /etc/passwd|grep -i <username>
+
+chage -l <username> - password aging details
+
+chsh <username> # change the login shell
+
+su - <username>
+ 
+ Vs
+sudo 
+
+root@host~]# useradd <username>			arun@host~]$ su -
+^^^^						Enter a password: <root user password>
+						root@host~]# mkdir /D1 <-- /root/.bash_history
+						....
+						....
+						
+						arun@host~]$ sudo mkdir /D2
+			Os will ask 		Enter a sudo password: <arun login password>
+										|
+			test arun user is sudo user or not
+						|	|->security mail to root
+						allows
+
+
+
+[arun@krosumlabs ~]$ sudo mkdir /D1
+
+We trust you have received the usual lecture from the local System
+Administrator. It usually boils down to these three things:
+
+    #1) Respect the privacy of others.
+    #2) Think before you type.
+    #3) With great power comes great responsibility.
+
+[sudo] password for arun:
+arun is not in the sudoers file.  This incident will be reported.
+[arun@krosumlabs ~]$
+
+
+Received: by krosumlabs.localdomain (Postfix, from userid 0)
+        id 1611A3085D08; Fri,  9 Aug 2024 15:25:20 +0530 (IST)
+To: root@krosumlabs.localdomain
+From: arun@krosumlabs.localdomain
+Auto-Submitted: auto-generated
+Subject: *** SECURITY information for krosumlabs ***
+Message-Id: <20240809095520.1611A3085D08@krosumlabs.localdomain>
+Date: Fri,  9 Aug 2024 15:25:20 +0530 (IST)
+
+krosumlabs : Aug  9 15:25:20 : arun : user NOT in sudoers ; TTY=pts/1 ; PWD=/home/arun ; USER=root ; COMMAND=/bin/mkdir /D1
+
+
+You have mail in /var/spool/mail/root
+[root@krosumlabs SH-Day5]#
+[root@krosumlabs SH-Day5]#
+[root@krosumlabs SH-Day5]#
+[root@krosumlabs SH-Day5]#
+[root@krosumlabs SH-Day5]#
+[root@krosumlabs SH-Day5]#
+[root@krosumlabs SH-Day5]# who
+root     tty1         2024-08-09 08:33
+root     pts/1        2024-08-09 09:33 (192.168.1.2)
+root     pts/2        2024-08-09 09:47 (192.168.1.2)
+[root@krosumlabs SH-Day5]#
+[root@krosumlabs SH-Day5]# w
+ 15:27:20 up  6:56,  3 users,  load average: 0.00, 0.01, 0.05
+USER     TTY      FROM             LOGIN@   IDLE   JCPU   PCPU WHAT
+root     tty1                      08:33    6:53m  0.01s  0.01s -bash
+root     pts/1    192.168.1.2      09:33    1:42   0.12s  0.01s -bash
+root     pts/2    192.168.1.2      09:47    0.00s  0.55s  0.00s w
+[root@krosumlabs SH-Day5]# whoa
+-bash: whoa: command not found
+[root@krosumlabs SH-Day5]# who
+root     tty1         2024-08-09 08:33
+root     pts/1        2024-08-09 09:33 (192.168.1.2)
+root     pts/2        2024-08-09 09:47 (192.168.1.2)
+[root@krosumlabs SH-Day5]# w
+ 15:28:08 up  6:57,  3 users,  load average: 0.21, 0.06, 0.06
+USER     TTY      FROM             LOGIN@   IDLE   JCPU   PCPU WHAT
+root     tty1                      08:33    6:54m  0.01s  0.01s -bash
+root     pts/1    192.168.1.2      09:33   15.00s  0.11s  0.00s vi p1
+root     pts/2    192.168.1.2      09:47    0.00s  0.55s  0.00s w
+[root@krosumlabs SH-Day5]# whatis w
+w (1)                - Show who is logged on and what they are doing.
+[root@krosumlabs SH-Day5]#
+[root@krosumlabs SH-Day5]# whatis who
+who (1)              - show who is logged on
+[root@krosumlabs SH-Day5]#
+###############################################################################
+/bin
+/sbin
+/usr/bin
+/usr/sbin
+-----------//files <-- binary file (command)
+
+/etc <-- configuration files
+   
+/proc <-- virtual files - /proc directory size is 0(zero) 
+	 - current state of kernel information
+
+/etc/file
+     |
+  we can edit this config file
+  reboot is required
+Vs
+/proc/file
+	|
+	we can edit this file - reboot is not required
+	
+
+
+	/proc		/etc
+	 |              |	  /media 
+	 |		|	  |
+	--------------------------
+					
+	proc		xfs	iso9660  <== file system 
+	 .		.	 .
+	 .		.	 .
+	 |		|	 |	
+	------------------------------
+	CPU RAM 	HD	CDROM
+
+
+
+
+[root@krosumlabs SH-Day5]# hostname
+krosumlabs
+[root@krosumlabs SH-Day5]# cat /etc/hostname
+krosumlabs
+[root@krosumlabs SH-Day5]# cat /proc/sys/kernel/hostname
+krosumlabs
+[root@krosumlabs SH-Day5]# echo "example.org" >/etc/hostname
+[root@krosumlabs SH-Day5]#
+[root@krosumlabs SH-Day5]# hostname
+krosumlabs
+[root@krosumlabs SH-Day5]# cat /etc/hostname
+example.org
+[root@krosumlabs SH-Day5]# cat /proc/sys/kernel/hostname
+krosumlabs
+[root@krosumlabs SH-Day5]# echo "testserver.com" >/proc/sys/kernel/hostname
+[root@krosumlabs SH-Day5]# cat /proc/sys/kernel/hostname
+testserver.com
+[root@krosumlabs SH-Day5]# hostname
+testserver.com
+[root@krosumlabs SH-Day5]# cat /etc/hostname
+example.org
+[root@krosumlabs SH-Day5]# hostname
+testserver.com
+[root@krosumlabs SH-Day5]# echo "krosumlabs" >/etc/hostname
+[root@krosumlabs SH-Day5]# echo "krosumlabs" >/proc/sys/kernel/hostname
+[root@krosumlabs SH-Day5]#
+
+[root@krosumlabs SH-Day5]# hostname
+krosumlabs
+[root@krosumlabs SH-Day5]# cat /proc/meminfo |grep -i swap
+SwapCached:            0 kB
+SwapTotal:       1257468 kB
+SwapFree:        1257468 kB
+[root@krosumlabs SH-Day5]#
+[root@krosumlabs SH-Day5]# free
+              total        used        free      shared  buff/cache   available
+Mem:        1014528      128052      285472        6796      601004      724228
+Swap:       1257468           0     1257468
+[root@krosumlabs SH-Day5]# free -m
+              total        used        free      shared  buff/cache   available
+Mem:            990         124         278           6         586         707
+Swap:          1227           0        1227
+[root@krosumlabs SH-Day5]#
+
+
+
+##################################################################################
+
+top	- q ->quit  P ->%cpu ;  M ->%mem;  z <or> b - Highlight running state process
+iotop
+htop
+
+ping 127.0.0.1{Enter}
+...
+....
+Ctrl+C - Exit Signal - there is no details in PCB(process ctrl block) 
+
+ping 127.0.0.1{Enter}
+...
+....
+Ctrl+Z - Stop Signal - process(ping) is stopped - details under PCB; ps ; ls /proc/<ping-process-pid>
+	 -----------
+
+	R+
+	|
+P1 - Wait  --<-----
+| 		   | Exit Signal
+P2 - R+....Exit----
+
+P1 - wait <== killed 
+| 		
+P2 - R+ ....//orphan process 
+     |_________________________systemD(PID:1)
+
+  PID	PPID
+  102	101
+  ...
+  102	1 
+
+
+P1 - Wait         //
+| 		   | Exit Signal - blocked
+P2 - R+....Exit----
+ -------------------------//Zombie
+ps -l
+  S
+  R
+  S
+  Z (zombie)
+
+
+########################################################################################
+
+root@host~]# command
+		|______(File,Process)
+			|	|
+			|	R+ (user process; bash is a parent; Address;....)//PCB
+		Reg.file ELF
+			|
+			...//FS
+########################################################################################
+
+systemd (PID:1)		/usr/lib/systemd/system/sshd.service
+	|			<or>
+	|_______________/etc/systemd/system/sshd.service
+						 |______________________//R+
+root@host~]# ssh <remotehost> {Enter}				/bin/sshd - R+
+...	     _________________________//user process	
+...//OK
+
+
+root@host~]# mysql -u root -p {Enter}				/bin/mysqld - R+ 
+mysql>	  ____________________________//user process				
+mysql>
+
+systemctl <= admin command
+
+systemctl status filename.service (ex: systemctl status sshd.service)
+s
+systemctl start filename.service
+	  stop
+	  restart filename.service
+--------------------------------------//root only can do
+
+systemctl -t service {Enter}
+	
+########################################################################################
+journalctl 
+journalctl -r 
+journalctl -n <Count> <== recent records 
+journalctl -u <unit> (ex: journctl -u sshd)
+journalctl -p  err
+	       info
+	       warn
+#######################################################################################
