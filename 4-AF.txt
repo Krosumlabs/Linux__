@@ -1,0 +1,466 @@
+Recap
+------
+variable
+
+	variable=value <= initialization
+	........
+	
+	vi ~/.bashrc
+
+	export variable=value
+	       ........
+
+	read -p "prompt message:"  variable 
+
+
+ls -l filename1
+      ^^^^^^^^^
+	
+grep <pattern> <inputFile>
+
+expr<space>Expression
+	   -----------
+	   <operand><space>OPERATOR<space><operand>
+	   ----------------------------------------
+
+compound style  -->  $((expression))
+		     ----------------
+-eq -ne -lt -le -gt -ge 
+== !=
+------------------------[  ] <or> test
+
+[<space>Expression<space>]
+--------------------------
+test<space>Expression
+---------------------
+if<space>[Expression]
+then
+	...
+else
+	...
+fi
+
+###################################################################################
+File Test Operators
+-------------------
+ |->File Types  |->File mode( read ; write ; execute )
+	|			-r    -w      -x <== operators
+
+
+Linux File Types
+-----------------
+1. Regular File <or> Ordinary File   -f
+2. Directory File		     -d
+3. Link File <or> Symlink <or>Symbolic link   -l
+4. Character Type device - ex: keyboard;terminal;printer   -c
+5. Block type device	 - ex: USB,HD,CDROM...		   -b
+6. named pipe <or> FIFO 				   -p
+7. Socket file						   -S
+
+ -e ->existing or not
+
+[<space><FILETESTOPERATOR><space>inputFile<space>]
+
+Test input file is existing or not ?
+
+if [ -e <filename> ]
+then
+	True - Yes input file is exists
+else
+	False - No file is not exists
+fi
+							
+Test input file is reg.file or not ?
+
+if [ -f <filename> ]
+then
+	Yes - file is existing ..
+	ls -l <filename>
+else
+	No - file is not exists
+fi
+
+Test input is executable file or not ?
+			 |        |______assign execute permission ->Run a file
+			 \_Run a file
+if [ -x <filename> ]
+then
+	./<filename>
+else
+	chmod a+x filename
+	./filename
+fi
+
+[ -f file -a -x file ]
+
+[ -f file -o -d file ]
+
+Write a shell script:
+   read a directory name from <STDIN>	read -p "Enter a directory name:" dname
+   |					
+   test - input directory is existing or not  ->  if [ -d $dname ]
+			      |		  |
+			      |	        mkdir $dname - create a new directory
+			      |				display message - directory is created.
+			directory already exists
+ 			ls -ld $dname
+
+read -p "Enter a directory:" dname
+
+if [ -d $dname ]
+then
+	echo "Yes Input directory $dname is already exists"
+	echo "About $dname details"
+	ls -ld $dname
+else
+	mkdir $dname
+	echo "Directory $dname is created"
+fi
+   					
+Write a shell script:
+ read a filename from <STDIN>
+ |
+ test input file is existing or not
+		     |		 |---->file is not exists
+		   test input file is reg.file => ls -l <filename>
+		   test input file is directory => ls -ld <filename>
+		   |
+		   file <filename> - display file type
+
+read -p "Enter a filename:" fname
+
+if [ -e "$fname" ]
+then
+	if [ -f "$fname" ]
+	then	
+		echo "Input file $fname is a reg.file"
+		ls -l $fname
+	elif [ -d <filename> ]
+	then
+		echo "Input file $fname is a directory file"
+		ls -ld $fname
+	else
+		file $fname
+	fi
+else
+	echo "Sorry file $fname is not exists"
+	exit 
+fi
+
+#########################################################################################
+Looping statements
+------------------
+|
+Code Block - more than one time
+|
+| -> Conditional style loop - based on bool ->True ->Code block will execute
+	\_ while
+
+| -> Collection style loop - based on no.of items
+	\_ for 
+
+| -> Conditional style loop - based on bool ->True ->Code block will execute
+	\_ while
+	
+  Rule 1: initialization   i=0		i=15		i=<number>
+  |
+  Rule 2: condition	 [ $i -lt 5 ]   [ $i -gt 10 ]	[ condition ]
+  |
+  Rule 3: arithmetic 	i=`expr $i + 1`   i=`expr $i - 1`
+
+initialization
+while<space>[ condition ]
+do
+	<code block>
+	ArithmeticOperation
+done
+
+break	- exit from loop
+continue - continue the loop - won't exit
+-------------//looping keywords
+
+
+  read a login name or username from <STDIN>
+  |
+  test input login <or> username is admin
+					|->login is success ; login is failed
+  
+  read -p "Enter a login name:" myname
+ 
+  if [ $myname == "admin" ]
+  then
+	echo "Login is matched"
+  else
+	echo "Login is Not Matched"
+  fi	
+
+
+i=0
+while [ $i -lt 5 ]
+do
+  read -p "Enter a login name:" myname
+
+  if [ $myname == "admin" ]
+  then
+        echo "Login is matched"
+        break # exit from loop
+  else
+        echo "Login is Not Matched"
+  fi
+  i=`expr $i + 1`
+done
+
+--------------------------------------------------------------------------------------
+| -> Collection style loop - based on no.of items
+	\_ for 		
+
+Syntax:-
+----------
+for  variable  in  <list of items>
+do
+	<code Block>
+done
+
+for in do done - keywords
+
+######################################################################################
+[root@krosumlabs SH-Day4]# cp /root/emp.csv .
+[root@krosumlabs SH-Day4]#
+[root@krosumlabs SH-Day4]# grep sales emp.csv
+101,raj,sales,pune,1000
+303,arun,sales,chennai,3000
+605,venkat,sales,mumbai,5000
+105,sharma,sales,mumbai,5678
+206,zion,sales,pune,5600
+[root@krosumlabs SH-Day4]# grep sales emp.csv |cut -d, -f2
+raj
+arun
+venkat
+sharma
+zion
+[root@krosumlabs SH-Day4]# for var in `grep sales emp.csv |cut -d, -f2`
+> do
+>   echo "Emp name is:$var"
+> done
+Emp name is:raj
+Emp name is:arun
+Emp name is:venkat
+Emp name is:sharma
+Emp name is:zion
+[root@krosumlabs SH-Day4]#
+
+######################################################################################
+
+commandline args inputs
+-------------------------
+
+read UDV <== execution input
+	      interactive input
+
+file:p1.sh
+-------------
+read -p "Enter a filename:" fname
+file $fname
+....
+----------------
+root@host~]# ./p1.sh {Enter}		Vs	root@host~]# ./p1.sh <filename> {Enter}
+Enter a filename:						     ^^^^^^^^^^
+		 ^^^^^^^^					      runtimeInput
+		  execution input
+
+
+In shell script commandline arguments are called positional parameters
+						 -----------------------
+
+root@host~]# ./p1.sh <ip1> <ip2> <ip3> <ip4> ...<ipN>{Enter}			
+		      $1     $2   $3     $4      ..
+
+file:p2.sh
+---------------
+file $1
+ls -l $1
+----------------
+./p2.sh p1.log {Enter}
+	------
+	 $1
+
+$1 $2 $3...$9 
+
+${N}
+  
+echo $3 same as ${3}
+echo $5 same as ${5}
+echo $9 same as ${9}
+
+10th args -> echo ${10}
+15th args -> echo ${15}
+
+$# (or) ${#} -> Total no.of args 
+
+if [ $# -eq 0 ]
+then
+	echo "Commandline argument is empty"
+fi
+
+$@ <or> ${@}
+$* <or> ${*}
+-------------//list of all args
+
+for var in $@
+do
+	....
+done
+####################################################################################
+Array
+-----			
+ |->variable - holding more than one value (different type)
+ |->index 
+
+ arrayname=(<list of items>)
+	  			
+ file_info=(p1.sh 146 2KB userA 93.23 "Red Hat Linux 7.5")
+	     0     1   2    3     4    <----- 5 -------> <== index
+	    -6	  -5  -4   -3	 -2	   -1 <== index
+ 
+ How to fetch Single value from an array ?
+
+  ${Arrayname[index]}
+ 
+ echo ${file_info[0]} => p1.sh
+ 
+ echo ${file_info[1]} => 146
+
+ echo ${file_info[-1]} => Red Hat Linux 7.5
+
+ if [ ${file_info[0]} == ${file_info[-6]} ]
+ then
+	echo "OK"		=>OK
+ else
+	echo "Not-OK"
+ fi
+
+ How to fetch list of all the items from an array?
+	 ${Arrayname[@]} <or>  ${Arrayname[*]}
+	
+  echo ${file_info[@]} => p1.sh 146 2KB userA 93.23 Red Hat Linux 7.5
+
+for var in ${file_info[@]}
+do
+	...
+done
+		
+ Total no.of items: ${#arrayname[@]}
+
+-----------------------------------------------------------------------------------------
+	command ->single value  =>  variable=`command` 
+	|
+	command ->multiple values => variable=(`command`)
+					|
+				      Array
+
+root@host~]# whoami
+root
+root@host~]# ps -e|wc -l
+134
+root@host~]# myname=`whoami`
+
+root@host~]# count=`ps -e|wc -l`
+
+root@host~]# process=(`ps`)
+
+	  A=(`ls -l p1.sh`)
+	    
+
+[root@krosumlabs SH-Day4]# ls -l emp.csv
+-rw-r--r--. 1 root root 214 Aug  8 14:58 emp.csv
+[root@krosumlabs SH-Day4]#
+[root@krosumlabs SH-Day4]# v=`ls -l emp.csv`
+[root@krosumlabs SH-Day4]#
+[root@krosumlabs SH-Day4]# echo $v
+-rw-r--r--. 1 root root 214 Aug 8 14:58 emp.csv
+[root@krosumlabs SH-Day4]# echo ${v[1]}
+
+[root@krosumlabs SH-Day4]#
+[root@krosumlabs SH-Day4]# a=(`ls -l emp.csv`)
+[root@krosumlabs SH-Day4]# echo ${a[@]}
+-rw-r--r--. 1 root root 214 Aug 8 14:58 emp.csv
+[root@krosumlabs SH-Day4]# echo ${#a[@]}
+9
+[root@krosumlabs SH-Day4]# echo ${a[0]}
+-rw-r--r--.
+[root@krosumlabs SH-Day4]# echo ${a[1]}
+1
+[root@krosumlabs SH-Day4]# echo ${a[2]}
+root
+[root@krosumlabs SH-Day4]# echo ${a[-1]}
+emp.csv
+[root@krosumlabs SH-Day4]# echo "${a[-1]}  ${a[4]} ${a[0]}"
+emp.csv  214 -rw-r--r--.
+[root@krosumlabs SH-Day4]#
+
+###############################################################################
+[root@krosumlabs SH-Day4]# cut -d, -f2 emp.csv
+raj
+leo
+arun
+anu
+venkat
+sharma
+zion
+theeb
+[root@krosumlabs SH-Day4]# users=(`cut -d, -f2 emp.csv`)
+[root@krosumlabs SH-Day4]# echo "${#users[@]}"
+8
+[root@krosumlabs SH-Day4]# wc -l emp.csv
+8 emp.csv
+[root@krosumlabs SH-Day4]#
+###############################################################################
+Function
+---------
+ |->Code block - group of commands 
+
+ |->function Call ; function definition//operaton
+	|____________________|
+
+ |->Code reusability
+
+ Syntax:-
+ ----------
+ function  functionName()
+ {
+
+
+ }
+
+function - keyword (optional)
+
+ functionName()
+ {
+  <code block>				
+ }
+
+functionName # simple functionCall
+
+[root@krosumlabs SH-Day4]# cat -n p13
+     1
+     2  display(){
+     3          uname -rs
+     4          hostname
+     5          whoami
+     6  }
+[root@krosumlabs SH-Day4]# cat -n p14
+     1  echo "This is p14 file"
+     2
+     3  source /root/SH-Day4/p13 # same as source "./p13"
+     4  display # functionCall
+     5  sleep 3
+     6  echo "Exit From p14 script";
+[root@krosumlabs SH-Day4]# ./p14
+This is p14 file
+Linux 4.1.12-94.3.9.el7uek.x86_64
+krosumlabs
+root
+Exit From p14 script
+[root@krosumlabs SH-Day4]#
+
+#####################################################################################
